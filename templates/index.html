@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Encryption Tool | Cybersecurity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .tagline {
+            color: #00ff44;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .panel {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .panel-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #00ff44;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #00ff88;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #00ff88;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: transparent;
+            border: none;
+            color: #00ff88;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9em;
+            font-weight: bold;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: #00ff44;
+            color: #00ff44;
+        }
+
+        .tab-btn:hover {
+            color: #00ff44;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #00ff88;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #00ff88;
+            background: rgba(0, 30, 60, 0.8);
+            color: #00ff88;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 0.95em;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="file"]:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            border-color: #00ff44;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: #00ff88;
+            color: #0a0e27;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: #00ff44;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 20px;
+            background: #00ff88;
+            color: #0a0e27;
+            border: none;
+            border-radius: 3px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover:not(:disabled) {
+            background: #00ff44;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            background: transparent;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            margin-top: 0;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.success {
+            background: rgba(0, 255, 68, 0.1);
+            border: 1px solid #00ff44;
+            color: #00ff44;
+        }
+
+        .status.error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+
+        .status.info {
+            background: rgba(0, 136, 255, 0.1);
+            border: 1px solid #0088ff;
+            color: #0088ff;
+        }
+
+        .info-box {
+            background: rgba(0, 30, 60, 0.8);
+            border: 1px solid #0088ff;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #0088ff;
+        }
+
+        .key-display {
+            background: rgba(0, 30, 60, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 3px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.8em;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .key-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .key-actions button {
+            flex: 1;
+            margin: 0;
+            padding: 8px;
+            font-size: 0.85em;
+        }
+
+        .keys-list {
+            background: rgba(0, 30, 60, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 3px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .key-item {
+            background: rgba(0, 50, 100, 0.5);
+            border-left: 2px solid #00ff44;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .key-info {
+            flex: 1;
+        }
+
+        .key-size {
+            color: #00ff44;
+            font-weight: bold;
+        }
+
+        .key-created {
+            color: #00ff88;
+            opacity: 0.7;
+            font-size: 0.8em;
+        }
+
+        .key-actions-item {
+            display: flex;
+            gap: 5px;
+        }
+
+        .key-actions-item button {
+            margin: 0;
+            padding: 6px 10px;
+            font-size: 0.75em;
+            flex: 0 1 auto;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #00ff88;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ff88;
+            border-top: 2px solid #00ff44;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .encryption-result {
+            background: rgba(0, 30, 60, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 3px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .encryption-result.show {
+            display: block;
+        }
+
+        .result-item {
+            margin-bottom: 10px;
+            font-size: 0.85em;
+        }
+
+        .result-label {
+            color: #00ff44;
+            font-weight: bold;
+        }
+
+        .result-value {
+            color: #00ff88;
+            word-break: break-all;
+            background: rgba(0, 50, 100, 0.5);
+            padding: 8px;
+            border-radius: 3px;
+            margin-top: 5px;
+            font-size: 0.8em;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .two-col button {
+            margin: 0;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 FILE ENCRYPTION TOOL</h1>
+            <p class="tagline">AES-256 + RSA hybrid encryption with integrity verification</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- PASSWORD-BASED ENCRYPTION PANEL -->
+            <div class="panel">
+                <div class="panel-title">PASSWORD ENCRYPTION</div>
+                
+                <div class="info-box">
+                    <strong>AES-256-GCM</strong> encryption derived from your password. Fast and convenient for personal file protection.
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('pwd-encrypt', 'pwd')">Encrypt</button>
+                    <button class="tab-btn" onclick="switchTab('pwd-decrypt', 'pwd')">Decrypt</button>
+                </div>
+
+                <!-- Encrypt Tab -->
+                <div id="pwd-encrypt" class="tab-content active">
+                    <div class="form-group">
+                        <label>Select File to Encrypt</label>
+                        <input type="file" id="pwdFile" />
+                        <div class="help-text">Any file type supported</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="pwdPassword" placeholder="Min 8 characters" />
+                        <div class="help-text">Strong password recommended</div>
+                    </div>
+
+                    <button onclick="encryptWithPassword()">ENCRYPT FILE</button>
+
+                    <div class="status" id="pwdEncryptStatus"></div>
+                    <div class="loading" id="pwdEncryptLoading"><div class="spinner"></div></div>
+
+                    <div class="encryption-result" id="pwdEncryptResult">
+                        <div class="result-item">
+                            <div class="result-label">Encrypted Data (Save this)</div>
+                            <div class="result-value" id="pwdEncryptResultValue"></div>
+                        </div>
+                        <div class="two-col">
+                            <button class="secondary-btn" onclick="copyToClipboard('pwdEncryptResultValue')">COPY</button>
+                            <button class="secondary-btn" onclick="downloadEncrypted('pwdEncrypted')">DOWNLOAD</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decrypt Tab -->
+                <div id="pwd-decrypt" class="tab-content">
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="pwdDecryptPassword" placeholder="Enter password" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Encrypted Data (JSON)</label>
+                        <textarea id="pwdDecryptData" style="width: 100%; height: 100px; padding: 10px; border: 1px solid #00ff88; background: rgba(0, 30, 60, 0.8); color: #00ff88; font-family: inherit; border-radius: 3px; font-size: 0.8em;" placeholder="Paste encrypted JSON data here"></textarea>
+                    </div>
+
+                    <button onclick="decryptWithPassword()">DECRYPT FILE</button>
+
+                    <div class="status" id="pwdDecryptStatus"></div>
+                    <div class="loading" id="pwdDecryptLoading"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- RSA KEY MANAGEMENT PANEL -->
+            <div class="panel">
+                <div class="panel-title">RSA KEY MANAGEMENT</div>
+
+                <div class="info-box">
+                    <strong>Generate RSA keypairs</strong> for hybrid encryption. Public key encrypts, private key decrypts.
+                </div>
+
+                <div class="form-group">
+                    <label>Key Size (bits)</label>
+                    <select id="keySize">
+                        <option value="2048">2048 (Fast)</option>
+                        <option value="3072">3072 (Balanced)</option>
+                        <option value="4096">4096 (Secure)</option>
+                    </select>
+                </div>
+
+                <button onclick="generateRSAKeys()">GENERATE NEW KEYPAIR</button>
+
+                <div class="status" id="keyGenStatus"></div>
+                <div class="loading" id="keyGenLoading"><div class="spinner"></div></div>
+
+                <div class="encryption-result" id="keyGenResult">
+                    <div class="result-item">
+                        <div class="result-label">Key ID</div>
+                        <div class="result-value" id="keyIdDisplay"></div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Public Key (PEM)</div>
+                        <div class="key-display" id="publicKeyDisplay"></div>
+                        <button class="secondary-btn" onclick="copyToClipboard('publicKeyDisplay')">COPY PUBLIC KEY</button>
+                    </div>
+                </div>
+
+                <div class="keys-list" id="keysList"></div>
+            </div>
+        </div>
+
+        <!-- HYBRID ENCRYPTION PANEL (Full width) -->
+        <div class="panel">
+            <div class="panel-title">HYBRID ENCRYPTION (AES-256 + RSA)</div>
+
+            <div class="info-box">
+                <strong>Maximum security:</strong> Uses RSA to securely exchange AES keys. Ideal for sensitive files and key exchange scenarios.
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('hybrid-encrypt', 'hybrid')">Encrypt</button>
+                <button class="tab-btn" onclick="switchTab('hybrid-decrypt', 'hybrid')">Decrypt</button>
+            </div>
+
+            <!-- Encrypt Tab -->
+            <div id="hybrid-encrypt" class="tab-content active">
+                <div class="form-group">
+                    <label>Select File to Encrypt</label>
+                    <input type="file" id="hybridFile" />
+                </div>
+
+                <div class="form-group">
+                    <label>RSA Public Key (PEM format)</label>
+                    <textarea id="hybridPublicKey" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #00ff88; background: rgba(0, 30, 60, 0.8); color: #00ff88; font-family: inherit; border-radius: 3px; font-size: 0.8em;" placeholder="Paste recipient's public key here"></textarea>
+                </div>
+
+                <button onclick="encryptWithHybrid()">ENCRYPT WITH PUBLIC KEY</button>
+
+                <div class="status" id="hybridEncryptStatus"></div>
+                <div class="loading" id="hybridEncryptLoading"><div class="spinner"></div></div>
+
+                <div class="encryption-result" id="hybridEncryptResult">
+                    <div class="result-item">
+                        <div class="result-label">Encrypted Package (Save this)</div>
+                        <div class="result-value" id="hybridEncryptResultValue"></div>
+                    </div>
+                    <div class="two-col">
+                        <button class="secondary-btn" onclick="copyToClipboard('hybridEncryptResultValue')">COPY</button>
+                        <button class="secondary-btn" onclick="downloadEncrypted('hybridEncrypted')">DOWNLOAD</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decrypt Tab -->
+            <div id="hybrid-decrypt" class="tab-content">
+                <div class="form-group">
+                    <label>Encrypted Data (JSON)</label>
+                    <textarea id="hybridDecryptData" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #00ff88; background: rgba(0, 30, 60, 0.8); color: #00ff88; font-family: inherit; border-radius: 3px; font-size: 0.8em;" placeholder="Paste encrypted JSON here"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Your Private Key (PEM format)</label>
+                    <textarea id="hybridPrivateKey" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #00ff88; background: rgba(0, 30, 60, 0.8); color: #00ff88; font-family: inherit; border-radius: 3px; font-size: 0.8em;" placeholder="Paste your private key here"></textarea>
+                </div>
+
+                <button onclick="decryptWithHybrid()">DECRYPT WITH PRIVATE KEY</button>
+
+                <div class="status" id="hybridDecryptStatus"></div>
+                <div class="loading" id="hybridDecryptLoading"><div class="spinner"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:5001';
+        let currentEncrypted = null;
+        let currentHybridEncrypted = null;
+
+        function switchTab(tabId, prefix) {
+            // Hide all tabs for this prefix
+            document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el => {
+                el.classList.remove('active');
+            });
+            // Remove active from all buttons for this prefix
+            document.querySelectorAll(`.tab-btn`).forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            // Activate clicked button
+            event.target.classList.add('active');
+        }
+
+        function showStatus(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = message ? `status show ${type}` : 'status';
+        }
+
+        async function encryptWithPassword() {
+            const file = document.getElementById('pwdFile').files[0];
+            const password = document.getElementById('pwdPassword').value;
+
+            if (!file) {
+                showStatus('pwdEncryptStatus', 'Please select a file', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showStatus('pwdEncryptStatus', 'Password must be at least 8 characters', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('password', password);
+
+            document.getElementById('pwdEncryptLoading').classList.add('show');
+
+            try {
+                const response = await fetch(`${API_URL}/api/encrypt/password`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+
+                currentEncrypted = await response.json();
+                document.getElementById('pwdEncryptResultValue').textContent = JSON.stringify(currentEncrypted, null, 2);
+                document.getElementById('pwdEncryptResult').classList.add('show');
+                showStatus('pwdEncryptStatus', 'File encrypted successfully!', 'success');
+            } catch (error) {
+                showStatus('pwdEncryptStatus', `Error: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('pwdEncryptLoading').classList.remove('show');
+            }
+        }
+
+        async function decryptWithPassword() {
+            const password = document.getElementById('pwdDecryptPassword').value;
+            const dataStr = document.getElementById('pwdDecryptData').value;
+
+            if (!password || !dataStr) {
+                showStatus('pwdDecryptStatus', 'Please enter password and encrypted data', 'error');
+                return;
+            }
+
+            try {
+                const encryptedData = JSON.parse(dataStr);
+                document.getElementById('pwdDecryptLoading').classList.add('show');
+
+                const response = await fetch(`${API_URL}/api/decrypt/password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, encrypted_data: encryptedData })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = encryptedData.filename || 'decrypted_file';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showStatus('pwdDecryptStatus', 'File decrypted and downloaded!', 'success');
+            } catch (error) {
+                showStatus('pwdDecryptStatus', `Error: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('pwdDecryptLoading').classList.remove('show');
+            }
+        }
+
+        async function generateRSAKeys() {
+            const keySize = document.getElementById('keySize').value;
+            document.getElementById('keyGenLoading').classList.add('show');
+
+            try {
+                const response = await fetch(`${API_URL}/api/keys/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key_size: parseInt(keySize) })
+                });
+
+                if (!response.ok) throw new Error('Failed to generate keys');
+
+                const data = await response.json();
+                document.getElementById('keyIdDisplay').textContent = data.key_id;
+                document.getElementById('publicKeyDisplay').textContent = data.public_key;
+                document.getElementById('keyGenResult').classList.add('show');
+
+                showStatus('keyGenStatus', `Keys generated! (${data.key_size}-bit RSA)`, 'success');
+                loadKeys();
+            } catch (error) {
+                showStatus('keyGenStatus', `Error: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('keyGenLoading').classList.remove('show');
+            }
+        }
+
+        async function loadKeys() {
+            try {
+                const response = await fetch(`${API_URL}/api/keys`);
+                const data = await response.json();
+
+                let html = '<strong>Stored Keys:</strong><br>';
+                if (data.keys.length === 0) {
+                    html += '<div style="color: #00ff88; opacity: 0.6; margin-top: 10px;">No keys generated yet</div>';
+                } else {
+                    data.keys.forEach(key => {
+                        html += `
+                            <div class="key-item">
+                                <div class="key-info">
+                                    <div><strong>${key.key_id}</strong></div>
+                                    <div class="key-size">${key.key_size}-bit RSA</div>
+                                    <div class="key-created">Created: ${new Date(key.created).toLocaleString()}</div>
+                                </div>
+                                <div class="key-actions-item">
+                                    <button class="secondary-btn" onclick="deleteKey('${key.key_id}')">DELETE</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('keysList').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading keys:', error);
+            }
+        }
+
+        async function deleteKey(keyId) {
+            if (confirm('Delete this key? This cannot be undone.')) {
+                try {
+                    await fetch(`${API_URL}/api/keys/${keyId}`, { method: 'DELETE' });
+                    loadKeys();
+                } catch (error) {
+                    alert('Error deleting key: ' + error.message);
+                }
+            }
+        }
+
+        async function encryptWithHybrid() {
+            const file = document.getElementById('hybridFile').files[0];
+            const publicKey = document.getElementById('hybridPublicKey').value;
+
+            if (!file || !publicKey) {
+                showStatus('hybridEncryptStatus', 'Please select file and provide public key', 'error');
+                return;
+            }
+
+            // Note: This is a simplified demo - in production, you'd need to handle RSA encryption on client side
+            showStatus('hybridEncryptStatus', 'Hybrid encryption requires server-side RSA processing (demo mode)', 'info');
+        }
+
+        async function decryptWithHybrid() {
+            showStatus('hybridDecryptStatus', 'Hybrid decryption requires server-side RSA processing', 'info');
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+
+        function downloadEncrypted(type) {
+            const data = type === 'pwdEncrypted' ? currentEncrypted : currentHybridEncrypted;
+            if (!data) return;
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `encrypted-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Load keys on page load
+        loadKeys();
+    </script>
+</body>
+</html>
