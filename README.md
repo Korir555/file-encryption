@@ -165,18 +165,18 @@ The application runs on `http://127.0.0.1:5001`
 ## Security Considerations
 
 ### Strengths
-✅ Industry-standard algorithms (AES, RSA, PBKDF2, HMAC)
-✅ Authenticated encryption (GCM mode prevents tampering)
-✅ Defense-in-depth (HMAC + GCM tag)
-✅ Secure random generation (OS entropy)
-✅ Proper key derivation (100K PBKDF2 iterations)
-✅ Constant-time comparison (timing attack prevention)
+ Industry-standard algorithms (AES, RSA, PBKDF2, HMAC)
+ Authenticated encryption (GCM mode prevents tampering)
+ Defense-in-depth (HMAC + GCM tag)
+ Secure random generation (OS entropy)
+ Proper key derivation (100K PBKDF2 iterations)
+ Constant-time comparison (timing attack prevention)
 
 ### Limitations
-⚠️ In-memory key storage (production should use secure enclaves)
-⚠️ No password strength validation (user responsibility)
-⚠️ Browser-based UI means keys/passwords visible in memory
-⚠️ Demo mode (keys stored in Flask process memory)
+ In-memory key storage (production should use secure enclaves)
+ No password strength validation (user responsibility)
+ Browser-based UI means keys/passwords visible in memory
+ Demo mode (keys stored in Flask process memory)
 
 ### Best Practices
 1. Use strong passwords (20+ characters, mixed case, symbols)
